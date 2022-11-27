@@ -12,17 +12,15 @@ public class Main {
         ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         mapper.registerModule(new JavaTimeModule());
 
-        //старые цены
-        List<Price> Av = mapper.readValue(new File("src/main/resources/Available_Prices.json"), new TypeReference<>() {
+        List<Price> availablePrice = mapper.readValue(new File("src/main/resources/Available_Prices.json"), new TypeReference<>() {
         });
 
-        //новые цены
-        List<Price> New = mapper.readValue(new File("src/main/resources/New_Prices.json"), new TypeReference<>() {
+        List<Price> newPrice = mapper.readValue(new File("src/main/resources/New_Prices.json"), new TypeReference<>() {
         });
-        //итоговый список и вывод в консоль
-        List<Price> result = ServicePrice.resultMethod(Av, New);
-        for (int i = 0; i < result.size(); i++) {
-            System.out.println(mapper.writeValueAsString(result.get(i)));
+        ServicePrice servicePrice= new ServicePrice();
+        List<Price> resultPrice = servicePrice.resultMethod(availablePrice, newPrice);
+        for (Price price : resultPrice) {
+            System.out.println(mapper.writeValueAsString(price));
         }
     }
 }
