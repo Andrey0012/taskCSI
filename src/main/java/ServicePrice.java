@@ -32,8 +32,8 @@ public class ServicePrice {
             Price newValue = pair.getKey();
             Price availableValue = pair.getValue();
             if (newValue.getValue() == availableValue.getValue()) {
-                Price price = valueEqual(newValue, availableValue);
-                priceListResult.add(price);
+                List<Price> list = valueEqual(newValue, availableValue);
+                priceListResult.addAll(list);
             } else {
                 priceListResult.add(newValue);
                 if (newValue.getBegin().isAfter(availableValue.getBegin())) {
@@ -51,10 +51,21 @@ public class ServicePrice {
         return priceListResult;
     }
 
-    public static Price valueEqual(Price key, Price value) {
+    public static List<Price> valueEqual(Price key, Price value) {
+        List<Price> priceList = new ArrayList<>();
+        if (key.getBegin().isAfter(value.getEnd()) || value.getBegin().isAfter(key.getEnd())) {
+         Price price = new Price(key.getId(), key.getProductCode(), key.getNumber(), key.getDepart(), key.getBegin(), key.getEnd(), key.getValue());
+         Price price1 = new Price(value.getId(), value.getProductCode(), value.getNumber(), value.getDepart(), value.getBegin(), value.getEnd(), value.getValue());
+           priceList.add(price1);
+           priceList.add(price);
+        }
+        else {
         LocalDateTime begin = Stream.of(key.getBegin(), value.getBegin()).min(LocalDateTime::compareTo).get();
         LocalDateTime end = Stream.of(key.getEnd(), value.getEnd()).max(LocalDateTime::compareTo).get();
-        return new Price(key.getId(), key.getProductCode(), key.getNumber(),
-                key.getDepart(), begin, end, key.getValue());
+            Price price = new Price(key.getId(), key.getProductCode(), key.getNumber(),
+                    key.getDepart(), begin, end, key.getValue());
+            priceList.add(price);
+        }
+        return priceList;
     }
 }
